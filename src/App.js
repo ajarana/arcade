@@ -2,41 +2,52 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {key} from './api-key.js';
-// import * from './api-key.js';
-// import './api-key.js';
 
-// var key2 = key;
-// console.log(key);
-function ajaxResultHandler(result) {
-  // var aTitle = result.articles[3].title;
-  // console.log(result);
-  // console.log(key);
-  document.getElementById("firstImage").src = result.articles[0].urlToImage;
-  document.getElementById("testing").innerHTML = result.articles[0].title;
+function AjaxResultHandler(props) {
+  // document.getElementById("firstImage").src = result.articles[0].urlToImage;
+  // document.getElementById("testing").innerHTML = result.articles[0].title;
+  console.log("AjaxResultHandler called with "+props);
+
+  var aDescription = props.result;
+  return (
+    <div>
+      <img alt="Abandoned machines." id="firstImage" />
+      <p id="testing">{aDescription}</p>
+    </div>
+  );
 }
 
 class App extends Component {
+  constructor() {
+    console.log("constructor in App called");
+    super();
+
+    this.state = {result: this.ajax(AjaxResultHandler)};
+    console.log(this.state.result);
+  }
+
+
   ajax(callback) {
     var aRequest = new XMLHttpRequest();
-
-    aRequest.onreadystatechange = onReadyStateChangeHandler;
-
-    aRequest.open("GET", "https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=" + key, true);
-    aRequest.send();
-
-
-    function onReadyStateChangeHandler() {
+    console.log("ajax(callback) was called");
+    aRequest.onreadystatechange = () => {
       if (aRequest.readyState === XMLHttpRequest.DONE) {
         if (aRequest.status === 200) {
-          callback(JSON.parse(aRequest.responseText));
+          var parsedData = JSON.parse(aRequest.responseText);
+          var aTitle = parsedData.articles[0].title;
+          var anImage = parsedData.articles[0].urlToImage;
+
+          this.setState({result: aTitle});
         }
       }
     }
+
+    aRequest.open("GET", "https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=" + key, true);
+    aRequest.send();
   }
 
   render() {
-    this.ajax(ajaxResultHandler);
-
+    console.log("render in App was called");
     return (
       <div className="App">
         <div className="App-header">
@@ -47,12 +58,12 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
         <button onClick={() => buttonClicker()}>just click me</button>
-        <img alt="Abandoned machines." id="firstImage" />
-        <p id="testing"></p>
+        <AjaxResultHandler result={this.state.result} />
       </div>
     );
   }
 }
+// <AjaxResultHandler result={this.state.result} />
 
 // (function testing() {
 //   theRealTest();
@@ -66,7 +77,7 @@ function buttonClicker() {
 
 }
 
-// function ajaxResultHandler(result) {
+// function AjaxResultHandler(result) {
 //   // var aTitle = result.articles[3].title;
 //   console.log(result);
 //   // document.getElementById("firstImage").src = result.articles[0].urlToImage;
@@ -89,6 +100,6 @@ function buttonClicker() {
 //       }
 //     }
 //   }
-// })(ajaxResultHandler);
+// })(AjaxResultHandler);
 
 export default App;
