@@ -3,103 +3,110 @@ import logo from './logo.svg';
 import './App.css';
 import {key} from './api-key.js';
 
-function AjaxResultHandler(props) {
-  // document.getElementById("firstImage").src = result.articles[0].urlToImage;
-  // document.getElementById("testing").innerHTML = result.articles[0].title;
-  console.log("AjaxResultHandler called with "+props);
+function Filter(props) {
+  return (
+    <input placeholder="Search..." className="searchBar" />
+  );
+}
 
-  var aDescription = props.result;
+function Article(props) {
+  return (
+    <div className="articles">
+      <img src={props.image} className="images" alt="From ars technica." />
+      <h3 className="titles">
+        <a href={props.url} target="_blank">
+          {props.title}
+        </a>
+      </h3>
+    </div>
+  )
+}
+
+function AjaxResultHandler(props) {
+  var articles = [];
+
+  if (props.result) {
+    var result = JSON.parse(props.result);
+
+    for (var i = 0; i < result.articles.length; i++) {
+      articles.push(<Article key={i} url={result.articles[i].url} title={result.articles[i].title} image={result.articles[i].urlToImage} />);
+    }
+  }
+
   return (
     <div>
-      <img alt="Abandoned machines." id="firstImage" />
-      <p id="testing">{aDescription}</p>
+      {/* <Filter /> */}
+      {articles}
     </div>
   );
 }
 
 class App extends Component {
   constructor() {
-    console.log("constructor in App called");
     super();
 
-    this.state = {result: this.ajax(AjaxResultHandler)};
-    console.log(this.state.result);
-  }
-
-
-  ajax(callback) {
-    var aRequest = new XMLHttpRequest();
-    console.log("ajax(callback) was called");
-    aRequest.onreadystatechange = () => {
-      if (aRequest.readyState === XMLHttpRequest.DONE) {
-        if (aRequest.status === 200) {
-          var parsedData = JSON.parse(aRequest.responseText);
-          var aTitle = parsedData.articles[0].title;
-          var anImage = parsedData.articles[0].urlToImage;
-
-          this.setState({result: aTitle});
-        }
-      }
+    var techUrls = {
+      arsTechnicaUrl: "https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=",
+      engadgetUrl: "https://newsapi.org/v1/articles?source=engadget&sortBy=top&apiKey=",
+      techRadarUrl: "https://newsapi.org/v1/articles?source=techradar&sortBy=top&apiKey=",
     }
 
-    aRequest.open("GET", "https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=" + key, true);
+    var gamingUrls = {
+      ignUrl: "https://newsapi.org/v1/articles?source=ign&sortBy=top&apiKey=",
+      polygonUrl: "https://newsapi.org/v1/articles?source=polygon&sortBy=top&apiKey=",
+    }
+
+    var scienceUrls = {
+      newScientistUrl: "https://newsapi.org/v1/articles?source=new-scientist&sortBy=top&apiKey=",
+      nationalGeographicUrl: "https://newsapi.org/v1/articles?source=national-geographic&sortBy=top&apiKey=",
+    }
+
+    this.state = {
+      "firstTechResult": this.ajax(techUrls.arsTechnicaUrl, "firstTechResult"),
+      "secondTechResult": this.ajax(techUrls.engadgetUrl, "secondTechResult"),
+      "thirdTechResult": this.ajax(techUrls.techRadarUrl, "thirdTechResult"),
+
+      "firstGamingResult": this.ajax(gamingUrls.ignUrl, "firstGamingResult"),
+      "secondGamingResult": this.ajax(gamingUrls.polygonUrl, "secondGamingResult"),
+
+      "firstScienceResult": this.ajax(scienceUrls.newScientistUrl, "firstScienceResult"),
+      "secondScienceResult": this.ajax(scienceUrls.nationalGeographicUrl, "secondScienceResult"),
+    }
+  }
+
+  ajax(url, propertyName) {
+    var aRequest = new XMLHttpRequest();
+
+    aRequest.onload = () => {
+      this.setState({[propertyName]: aRequest.responseText});
+    }
+
+    aRequest.open("GET", url + key, true);
     aRequest.send();
   }
 
   render() {
-    console.log("render in App was called");
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>TextNews</h2>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <button onClick={() => buttonClicker()}>just click me</button>
-        <AjaxResultHandler result={this.state.result} />
+
+        <Filter />
+
+        <AjaxResultHandler result={this.state.firstTechResult} />
+        <AjaxResultHandler result={this.state.secondTechResult} />
+        <AjaxResultHandler result={this.state.thirdTechResult} />
+
+        <AjaxResultHandler result={this.state.firstGamingResult} />
+        <AjaxResultHandler result={this.state.secondGamingResult} />
+
+        <AjaxResultHandler result={this.state.firstScienceResult} />
+        <AjaxResultHandler result={this.state.secondScienceResult} />
       </div>
     );
   }
 }
-// <AjaxResultHandler result={this.state.result} />
-
-// (function testing() {
-//   theRealTest();
-// })();
-//
-// function theRealTest() {
-
-// }
-
-function buttonClicker() {
-
-}
-
-// function AjaxResultHandler(result) {
-//   // var aTitle = result.articles[3].title;
-//   console.log(result);
-//   // document.getElementById("firstImage").src = result.articles[0].urlToImage;
-//   document.getElementById("testing").innerHTML = result.articles[0].title;
-// }
-
-// (function ajax(callback) {
-//   var aRequest = new XMLHttpRequest();
-//
-//   aRequest.onreadystatechange = onReadyStateChangeHandler;
-//
-//   aRequest.open("GET", "https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=" + key, true);
-//   aRequest.send();
-//
-//
-//   function onReadyStateChangeHandler() {
-//     if (aRequest.readyState === XMLHttpRequest.DONE) {
-//       if (aRequest.status === 200) {
-//         callback(JSON.parse(aRequest.responseText));
-//       }
-//     }
-//   }
-// })(AjaxResultHandler);
 
 export default App;
