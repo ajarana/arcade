@@ -5,16 +5,28 @@ import {key} from './api-key.js';
 
 function Filter(props) {
   return (
-    <input placeholder="Search..." className="searchBar" />
+    <div>
+    {/* <input placeholder="Search..." className="searchBar" /> */}
+    <div id="filterContainer">
+      <button onClick={() => props.clickHandler("technology")} id="filter1" className="filters">Technology</button>
+      <button onClick={() => props.clickHandler("gaming")} id="filter2" className="filters">Gaming</button>
+      <button onClick={() => props.clickHandler("science")} id="filter3" className="filters">Science</button>
+    </div>
+    </div>
   );
 }
 
 function Article(props) {
+  if (document.getElementsByClassName("images")[0]) {
+    var lol = document.getElementsByClassName("images")[0];
+    console.log(lol.naturalWidth);
+  }
+  // console.log(prop)
   return (
     <div className="articles">
-      <img src={props.image} className="images" alt="From ars technica." />
+      <img src={props.image} className="images" alt="From various news sources." />
       <h3 className="titles">
-        <a href={props.url} target="_blank">
+        <a href={props.url} className="plainLinks" target="_blank">
           {props.title}
         </a>
       </h3>
@@ -25,17 +37,20 @@ function Article(props) {
 function AjaxResultHandler(props) {
   var articles = [];
 
-  if (props.result) {
-    var result = JSON.parse(props.result);
+  if (props.result[0]) {
+    var result = [];
 
-    for (var i = 0; i < result.articles.length; i++) {
-      articles.push(<Article key={i} url={result.articles[i].url} title={result.articles[i].title} image={result.articles[i].urlToImage} />);
+    for (var i = 0; i < props.result.length; i++) {
+      result.push(JSON.parse(props.result[i]));
+
+      for (var k = 0; k < result[i].articles.length; k++) {
+        articles.push(<Article key={articles.length} url={result[i].articles[k].url} title={result[i].articles[k].title} image={result[i].articles[k].urlToImage} />);
+      }
     }
   }
 
   return (
     <div>
-      {/* <Filter /> */}
       {articles}
     </div>
   );
@@ -45,47 +60,65 @@ class App extends Component {
   constructor() {
     super();
 
-    var techUrls = {
-      arsTechnicaUrl: "https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=",
-      engadgetUrl: "https://newsapi.org/v1/articles?source=engadget&sortBy=top&apiKey=",
-      techRadarUrl: "https://newsapi.org/v1/articles?source=techradar&sortBy=top&apiKey=",
-    }
-
-    var gamingUrls = {
-      ignUrl: "https://newsapi.org/v1/articles?source=ign&sortBy=top&apiKey=",
-      polygonUrl: "https://newsapi.org/v1/articles?source=polygon&sortBy=top&apiKey=",
-    }
-
-    var scienceUrls = {
-      newScientistUrl: "https://newsapi.org/v1/articles?source=new-scientist&sortBy=top&apiKey=",
-      nationalGeographicUrl: "https://newsapi.org/v1/articles?source=national-geographic&sortBy=top&apiKey=",
-    }
-
     this.state = {
-      "firstTechResult": this.ajax(techUrls.arsTechnicaUrl, "firstTechResult"),
-      "secondTechResult": this.ajax(techUrls.engadgetUrl, "secondTechResult"),
-      "thirdTechResult": this.ajax(techUrls.techRadarUrl, "thirdTechResult"),
-
-      "firstGamingResult": this.ajax(gamingUrls.ignUrl, "firstGamingResult"),
-      "secondGamingResult": this.ajax(gamingUrls.polygonUrl, "secondGamingResult"),
-
-      "firstScienceResult": this.ajax(scienceUrls.newScientistUrl, "firstScienceResult"),
-      "secondScienceResult": this.ajax(scienceUrls.nationalGeographicUrl, "secondScienceResult"),
+      "sources": [],
     }
+
+    this.clickHandler = this.clickHandler.bind(this);
   }
 
-  ajax(url, propertyName) {
+  ajax(url, stateName) {
+    console.log("ajax called");
     var aRequest = new XMLHttpRequest();
 
     aRequest.onload = () => {
-      this.setState({[propertyName]: aRequest.responseText});
+      if (stateName) {
+        const anArray = this.state[stateName].slice();
+        anArray.push(aRequest.responseText)
+        this.setState({[stateName]: anArray});
+      } else {
+        this.sourceParser(aRequest.responseText);
+      }
     }
 
-    aRequest.open("GET", url + key, true);
+    if (stateName) {
+      aRequest.open("GET", url + key, true);
+    } else {
+      aRequest.open("GET", url, true);
+    }
+
     aRequest.send();
   }
 
+  sourceParser(responseText) {
+    const response = JSON.parse(responseText);
+    const responseSources = [];
+    console.log("sourceparser called");
+    for (var i = 0; i < response.sources.length; i++) {
+      var firstAvailableSort = response.sources[i].sortBysAvailable[0];
+
+      responseSources.push("https://newsapi.org/v1/articles?source=" + response.sources[i].id + "&sortBy=" + firstAvailableSort + "&apiKey=");
+
+      this.ajax(responseSources[i], "sources");
+    }
+  }
+
+  clickHandler(category) {
+    const clearAll = [];
+    this.setState({["sources"]: clearAll});
+
+    if (category === "technology") {
+      this.ajax("https://newsapi.org/v1/sources?category=technology");
+    } else if (category === "gaming") {
+      this.ajax("https://newsapi.org/v1/sources?category=gaming");
+    } else if (category === "science") {
+      this.ajax("https://newsapi.org/v1/sources?category=science-and-nature");
+    }
+  }
+
   render() {
+    console.log("render was called");
+
     return (
       <div className="App">
         <div className="App-header">
@@ -93,17 +126,8 @@ class App extends Component {
           <h2>TextNews</h2>
         </div>
 
-        <Filter />
-
-        <AjaxResultHandler result={this.state.firstTechResult} />
-        <AjaxResultHandler result={this.state.secondTechResult} />
-        <AjaxResultHandler result={this.state.thirdTechResult} />
-
-        <AjaxResultHandler result={this.state.firstGamingResult} />
-        <AjaxResultHandler result={this.state.secondGamingResult} />
-
-        <AjaxResultHandler result={this.state.firstScienceResult} />
-        <AjaxResultHandler result={this.state.secondScienceResult} />
+        <Filter clickHandler={this.clickHandler} />
+        <AjaxResultHandler result={this.state.sources} />
       </div>
     );
   }
