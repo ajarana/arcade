@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+// import logo from './logo.svg';
+import './css/App.css'; 
 import {key} from './api-key.js';
 
 function Filter(props) {
   return (
-    <div>
+    <div id="filterWrapper">
     <div id="filterContainer">
-      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("technology")} id="filter1" className={(props.firstButtonSelected) ? "filter selected1" : "filter"}>Technology</button>
+      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("technology")} id="filter1" className={(props.firstButtonSelected) ? "filter selected1" : "filter"}>Tech</button>
       <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("gaming")} id="filter2" className={(props.secondButtonSelected) ? "filter selected2" : "filter"}>Gaming</button>
       <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("science-and-nature")} id="filter3" className={(props.thirdButtonSelected) ? "filter selected3" : "filter"}>Science</button>
     </div>
@@ -93,6 +93,9 @@ class App extends Component {
     }
 
     this.clickHandler = this.clickHandler.bind(this);
+  }
+
+  componentDidMount() {
     this.clickHandler("technology");
   }
 
@@ -192,10 +195,30 @@ class App extends Component {
     // console.log(this.state.firstStageLength);
     return (
       <div className="App">
-        <div className="App-header">
+        {/* <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h2>a name</h2>
-        </div>
+        </div> */}
+        <header id="header" className="flexCentered">
+          <div className="mainContainer blockToFlexCentered textAlignCenter">
+            <a className="plainLink" href="/">
+            <div id="headerTitle" className="inlineBlockToFlexLeft flexibleCol">
+                <div id="logo"></div>
+                <div id="headerTitleText">
+                  <p className="boldText">Andres Arana</p>
+                  <p>Front-End Developer</p>
+                </div>
+            </div>
+            </a>
+            <div id="profilesContainer" className="flexibleCol flexCenteredToFlexRight">
+              <a href="https://github.com/ajarana" target="_blank">
+                <div id="gitHubIcon"></div>
+              </a>
+              <a className="plainLink" id="resumeLink" href="css/assets/resume/Front-End-Developer-Andres-Arana.pdf" target="_blank">Resume</a>
+              <a className="plainLink" id="blogLink" href="/blog.html">Blog</a>
+            </div>
+          </div>
+        </header>
 
         <div id="contentWrapper">
         <Filter clickHandler={this.clickHandler} firstStageLength={this.state.firstStageLength} firstButtonSelected={this.state.firstButtonSelected} secondButtonSelected={this.state.secondButtonSelected} thirdButtonSelected={this.state.thirdButtonSelected} />

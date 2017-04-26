@@ -1,3 +1,10 @@
+@import "./responsive.css";
+@import "./header.css";
+
+body {
+  font-size: 14px;
+}
+
 .App {
   /*text-align: center;*/
 }
@@ -21,11 +28,17 @@
 }
 
 #contentWrapper {
-  width: 60%;
+  width: 100%;
   max-width: 700px;
 
   margin: 0 auto;
 }
+@media (min-width: 576) {
+  #contentWrapper {
+    width: 85%;
+  }
+}
+
 
 .searchBar {
   width: 80%;
@@ -40,14 +53,25 @@
 
 }
 
+#filterWrapper {
+  max-width: 450px;
+  text-align: center;
+  margin: 0 auto;
+}
+
 #filterContainer {
   margin: 25px 0;
-  text-align: center;
+  /*text-align: center;*/
+  display: flex;
+  justify-content: center;
 }
 
 .filter {
   margin-right: 0px;
-  padding: 15px 35px;
+  /*padding: 15px 35px;*/
+  padding: 10px 0;
+  flex: 0 0 25%;
+  font-size: 14px;
   color: #939393;
   cursor: pointer;
 
@@ -114,10 +138,10 @@
   background-color: hsl(110, 100%, 31%);
 }
 #progressBar1 {
-  border-radius: 2px 0 0 2px;
+  /*border-radius: 2px 0 0 2px;*/
 }
 #progressBar2 {
-  border-radius: 0 2px 2px 0;
+  /*border-radius: 0 2px 2px 0;*/
 }
 
 .hiddenBar {
@@ -134,44 +158,27 @@
 }
 
 .article {
-  padding: 30px 30px;
-  /*background-color: pink;*/
-  /*margin: 10px 0;*/
-  /*border-top: 1px solid #bbb;*/
+  padding: 14px 14px;
   border: 1px solid #ececec;
   margin-top: -1px;
-  /*border-bottom: 1px solid #777;*/
-  /*border-radius: 3px;*/
-/*
-  width: 60%;
-  max-width: 700px;
-  margin: 0 auto;*/
 }
-
-.images {
-  width: 60%;
-  max-width: 700px;
-  max-width: 100%;
+@media (min-width: 576) {
+  .article {
+    padding: 30px 30px;
+  }
 }
 
 .titleWrapper {
-  /*width: 95%;
-  margin: 0 auto;
-  text-align: left;*/
   display: flex;
   align-items: center;
 }
 
 .numbering {
   color: #999;
-  /*padding-right: 30px;*/
 }
 
 .titles {
-  /*display: inline-block;*/
-  /*padding-top: 10px;*/
-  padding-left: 30px;
-  /*text-align: left;*/
+  padding-left: 25px;
 }
 
 .plainLinks {
@@ -185,8 +192,12 @@
 }
 
 .background-grey {
-  background-color: #f4f4f4;
+  background-color: #f6f6f6;
   /*border: 1px solid #eaeaea;*/
+}
+
+h3 {
+  font-size: 130%;
 }
 
 @keyframes App-logo-spin {
