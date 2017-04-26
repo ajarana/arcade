@@ -6,30 +6,50 @@ import {key} from './api-key.js';
 function Filter(props) {
   return (
     <div>
-    {/* <input placeholder="Search..." className="searchBar" /> */}
     <div id="filterContainer">
-      <button onClick={() => props.clickHandler("technology")} id="filter1" className="filters">Technology</button>
-      <button onClick={() => props.clickHandler("gaming")} id="filter2" className="filters">Gaming</button>
-      <button onClick={() => props.clickHandler("science")} id="filter3" className="filters">Science</button>
+      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("technology")} id="filter1" className={(props.firstButtonSelected) ? "filter selected1" : "filter"}>Technology</button>
+      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("gaming")} id="filter2" className={(props.secondButtonSelected) ? "filter selected2" : "filter"}>Gaming</button>
+      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("science-and-nature")} id="filter3" className={(props.thirdButtonSelected) ? "filter selected3" : "filter"}>Science</button>
     </div>
     </div>
   );
 }
 
-function Article(props) {
-  if (document.getElementsByClassName("images")[0]) {
-    var lol = document.getElementsByClassName("images")[0];
-    console.log(lol.naturalWidth);
-  }
-  // console.log(prop)
+function ProgressBar(props) {
+  // console.log("HERE AT PROGRESS BAR");
+  // console.log((props.actualLength/(props.totalLength)) ? (props.actualLength)/(props.totalLength)*80+"%" : 0);
+  // console.log("where props.actualLength is: ");
+  // console.log(props.actualLength);
+  // console.log("and props.totalLength is: ");
+  // console.log(props.totalLength);
+  // console.log("and props.currentlyLoading is: " + props.currentlyLoading);
+  // console.log("and firststagelength is: "+props.firstStageLength);
+
   return (
-    <div className="articles">
-      <img src={props.image} className="images" alt="From various news sources." />
-      <h3 className="titles">
-        <a href={props.url} className="plainLinks" target="_blank">
-          {props.title}
-        </a>
-      </h3>
+    <div id="progressBarWrapper" style={{opacity: (props.currentlyLoading) ? 1 : 0}}>
+      <div id="progressBar1" className={(props.currentlyLoading) ? ("progressBar "+props.currentCategory) : ("hiddenBar "+props.currentCategory)} style={{width: (props.firstStageLength) ? props.firstStageLength + "%" : 0}}>
+      </div>
+
+      <div id="progressBar2" className={(props.currentlyLoading) ? ("progressBar "+props.currentCategory) : ("hiddenBar "+props.currentCategory)} style={{width: (props.actualLength/(props.totalLength)) ? (props.actualLength)/(props.totalLength)*80+"%" : 0}}>
+      </div>
+    </div>
+  );
+}
+
+function Article(props) {
+  var background = ((props.number % 2 === 0)) ? "background-white" : "background-grey";
+  // console.log(background);
+  return (
+    <div className={"article "+background}>
+      {/* <img src={props.image} className="images" alt="From various news sources." /> */}
+      <div className="titleWrapper">
+        <span className="numbering">{props.number}</span>
+        <h3 className="titles">
+          <a href={props.url} className="plainLinks" target="_blank">
+            {props.title}
+          </a>
+        </h3>
+      </div>
     </div>
   )
 }
@@ -44,13 +64,15 @@ function AjaxResultHandler(props) {
       result.push(JSON.parse(props.result[i]));
 
       for (var k = 0; k < result[i].articles.length; k++) {
-        articles.push(<Article key={articles.length} url={result[i].articles[k].url} title={result[i].articles[k].title} image={result[i].articles[k].urlToImage} />);
+        articles.push(<Article key={articles.length} number={articles.length+1} url={result[i].articles[k].url} title={result[i].articles[k].title} image={result[i].articles[k].urlToImage} />);
       }
     }
   }
-
+  // console.log("AjaxResultHandler articles.length: ");
+  // console.log(articles.length);
   return (
     <div>
+      {/* <ProgressBar totalLength={props.totalLength} actualLength={props.actualLength} fakeLength={100} /> */}
       {articles}
     </div>
   );
@@ -61,21 +83,32 @@ class App extends Component {
     super();
 
     this.state = {
+      "currentlyLoading": false,
       "sources": [],
+      "totalSourcesLoaded": null,
+      "actualSourcesLoaded": 0,
+      "firstStageLength": null,
+      "firstButtonSelected": true,
+      "currentCategory": null,
     }
 
     this.clickHandler = this.clickHandler.bind(this);
+    this.clickHandler("technology");
   }
 
   ajax(url, stateName) {
-    console.log("ajax called");
+    // console.log("ajax called with: "+url);
+    // console.log(url);
     var aRequest = new XMLHttpRequest();
 
     aRequest.onload = () => {
       if (stateName) {
         const anArray = this.state[stateName].slice();
         anArray.push(aRequest.responseText)
-        this.setState({[stateName]: anArray});
+
+        this.setState((prevState) => {
+          return {[stateName]: anArray, "actualSourcesLoaded": prevState.actualSourcesLoaded + 1}
+        });
       } else {
         this.sourceParser(aRequest.responseText);
       }
@@ -93,41 +126,85 @@ class App extends Component {
   sourceParser(responseText) {
     const response = JSON.parse(responseText);
     const responseSources = [];
-    console.log("sourceparser called");
+
+    this.setState({"totalSourcesLoaded": response.sources.length});
+
     for (var i = 0; i < response.sources.length; i++) {
       var firstAvailableSort = response.sources[i].sortBysAvailable[0];
 
       responseSources.push("https://newsapi.org/v1/articles?source=" + response.sources[i].id + "&sortBy=" + firstAvailableSort + "&apiKey=");
 
+      // this.setState({"totalSourcesLoaded": response.sources.length, "actualSourcesLoaded": i+1});
       this.ajax(responseSources[i], "sources");
+    }
+    // console.log("HERE I AM");
+    // console.log(response.sources.length);
+    // console.log(response.sources);
+  }
+
+  // shouldComponentUpdate() {
+  //   return this.state["sources"].length > 0;
+  // }
+  componentDidUpdate() {
+    // console.log("componentdidupdate called");
+    if (this.state.actualSourcesLoaded === this.state.totalSourcesLoaded && this.state.currentlyLoading === false) {
+      setTimeout(() => {
+        // console.log("FIRST SETTIMEOUT");
+        this.setState({"totalSourcesLoaded": null, "actualSourcesLoaded": 0, "firstStageLength": 0})
+      }, 200);
+    }
+    else if (this.state.actualSourcesLoaded === this.state.totalSourcesLoaded) {
+      setTimeout(() => {
+        // console.log("SECOND SETTIMEOUT");
+        this.setState({"currentlyLoading": false})
+      }, 500);
     }
   }
 
   clickHandler(category) {
-    const clearAll = [];
-    this.setState({["sources"]: clearAll});
-
+    console.log("clickhandler called");
     if (category === "technology") {
-      this.ajax("https://newsapi.org/v1/sources?category=technology");
-    } else if (category === "gaming") {
-      this.ajax("https://newsapi.org/v1/sources?category=gaming");
-    } else if (category === "science") {
-      this.ajax("https://newsapi.org/v1/sources?category=science-and-nature");
+      this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": true, "secondButtonSelected": false, "thirdButtonSelected": false, "currentCategory": category});
     }
+    else if (category === "gaming") {
+      this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": false, "secondButtonSelected": true, "thirdButtonSelected": false, "currentCategory": category});
+    } else {
+      this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": false, "secondButtonSelected": false, "thirdButtonSelected": true, "currentCategory": category});
+    }
+
+    // this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": true});
+
+    this.ajax("https://newsapi.org/v1/sources?language=en&category=" + category);
+  }
+
+  loadHandler() {
+    console.log("rofl");
   }
 
   render() {
-    console.log("render was called");
-
+    // console.log("render called with this.state.sources.length as: ")
+    // console.log(this.state.sources.length);
+    // // console.log("render called with this.state.sources as: ")
+    // // console.log(this.state.sources);
+    // console.log("render called with this.state.totalSourcesLoaded as: ")
+    // console.log(this.state.totalSourcesLoaded);
+    // console.log("first stage length is: ");
+    // console.log(this.state.firstStageLength);
     return (
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>TextNews</h2>
+          <h2>a name</h2>
         </div>
 
-        <Filter clickHandler={this.clickHandler} />
+        <div id="contentWrapper">
+        <Filter clickHandler={this.clickHandler} firstStageLength={this.state.firstStageLength} firstButtonSelected={this.state.firstButtonSelected} secondButtonSelected={this.state.secondButtonSelected} thirdButtonSelected={this.state.thirdButtonSelected} />
+
+        {/* <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.sources.length} fakeLength={100} /> */}
+        <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.actualSourcesLoaded} firstStageLength={this.state.firstStageLength} currentlyLoading={this.state.currentlyLoading} currentCategory={this.state.currentCategory} />
+
         <AjaxResultHandler result={this.state.sources} />
+        </div>
       </div>
     );
   }
