@@ -1,5 +1,8 @@
 @import "./responsive.css";
 @import "./header.css";
+@import "./normalize.css";
+@import "./footer.css";
+@import "./colors.css";
 
 body {
   font-size: 14px;
@@ -55,7 +58,7 @@ body {
 
 #filterWrapper {
   max-width: 450px;
-  text-align: center;
+  /*text-align: center;*/
   margin: 0 auto;
 }
 
@@ -67,10 +70,10 @@ body {
 }
 
 .filter {
-  margin-right: 0px;
+  /*display: block;*/
   /*padding: 15px 35px;*/
   padding: 10px 0;
-  flex: 0 0 25%;
+  flex: 0 1 25%;
   font-size: 14px;
   color: #939393;
   cursor: pointer;
@@ -103,20 +106,15 @@ body {
 }
 .filter:focus {
   outline: none;
-  /*border: 1px solid red;*/
 }
 
 #filter1 {
   border-radius: 10px 0px 0px 10px;
-  /*border-right: none;*/
 }
 #filter2 {
-  /*border-right: none;
-  border-left: none;*/
 }
 #filter3 {
   border-radius: 0px 10px 10px 0px;
-  /*border-left: none;*/
 }
 
 #progressBarWrapper {
@@ -129,7 +127,8 @@ body {
   transition: width 0.5s ease-out 0s, opacity 0.2s ease-in 0s;
 }
 .progressBar.technology {
-  background-color: hsl(330, 100%, 50%);
+  background-color: hsl(350, 100%, 50%);
+  background-color: #ff0080;
 }
 .progressBar.gaming {
   background-color: hsl(220, 100%, 52%);
@@ -148,7 +147,7 @@ body {
   height: 5px;
 }
 .hiddenBar.technology {
-  background-color: hsl(330, 100%, 50%);
+  background-color: hsl(350, 100%, 50%);
 }
 .hiddenBar.gaming {
   background-color: hsl(220, 100%, 52%);
@@ -166,6 +165,9 @@ body {
   .article {
     padding: 30px 30px;
   }
+}
+.article:first-child {
+  margin-top: 0;
 }
 
 .titleWrapper {

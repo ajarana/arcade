@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
+// import logo from './logo.svg';
 import './css/App.css';
 import {key} from './api-key.js';
-// import OurConnector from './containers/filter';
+// import {menu} from './mobileMenu.js';
 
 function Filter(props) {
   return (
     <div id="filterWrapper">
     <div id="filterContainer">
-      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("technology")} id="filter1" className={(props.firstButtonSelected) ? "filter selected1" : "filter"}>Tech</button>
-      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("gaming")} id="filter2" className={(props.secondButtonSelected) ? "filter selected2" : "filter"}>Gaming</button>
-      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("science-and-nature")} id="filter3" className={(props.thirdButtonSelected) ? "filter selected3" : "filter"}>Science</button>
+      <button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("technology")} id="filter1" className={(props.firstButtonSelected) ? "filter selected1" : "filter"}>Tech</button><button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("gaming")} id="filter2" className={(props.secondButtonSelected) ? "filter selected2" : "filter"}>Gaming</button><button disabled={(props.firstStageLength) ? true : false} onClick={() => props.clickHandler("science-and-nature")} id="filter3" className={(props.thirdButtonSelected) ? "filter selected3" : "filter"}>Science</button>
     </div>
     </div>
   );
@@ -195,8 +194,52 @@ class App extends Component {
     // console.log(this.state.firstStageLength);
     return (
       <div className="App">
+        {/* <div className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h2>a name</h2>
+        </div> */}
+        {/* <header id="header" className="flexCentered">
+          <div className="mainContainer flexCentered textAlignCenter">
+            <div id="titleContainer" className="flexLeft">
+              <a className="plainLink col-2-flex" href="/">
+              <div id="headerTitle" className="flexLeft col-2-flex">
+                  <div id="logo"></div>
+                  <div id="headerTitleText">
+                    <p className="boldText">Andres Arana</p>
+                    <p>Front-End Developer</p>
+                  </div>
+              </div>
+              </a>
+            </div>
+            <div id="buttonWrapper" className="col-2-flex flexRight">
+              <button id="mobileButton">
+                <div className="hamburgerIcon"></div>
+                <div className="hamburgerIcon"></div>
+                <div className="hamburgerIcon"></div>
+              </button>
+            </div>
+            <div id="mobileProfilesContainer" className="col-2-flex">
+              <ul id="headerMenu">
+                <li id="mobileResume" className="menuItems"><a className="plainLink headerLink" id="resumeLink" href="css/assets/resume/Front-End-Developer-Andres-Arana.pdf" target="_blank">Resume</a>
+                </li>
+                <li className="menuItems">
+                  <a className="plainLink headerLink" id="blogLink" href="/blog.html">Blog</a>
+                </li>
+                <li id="desktopResume" className="menuItems"><a className="plainLink headerLink" id="resumeLink" href="resume.html" target="_blank">Resume</a>
+                </li>
+                <li className="menuItems">
+
+                </li>
+                <li className="menuItems"><a href="https://github.com/ajarana" target="_blank">
+                  <div id="gitHubIcon"></div>
+                </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </header> */}
+
         <div id="contentWrapper">
-        {/* <OurConnector /> */}
         <Filter clickHandler={this.clickHandler} firstStageLength={this.state.firstStageLength} firstButtonSelected={this.state.firstButtonSelected} secondButtonSelected={this.state.secondButtonSelected} thirdButtonSelected={this.state.thirdButtonSelected} />
 
         {/* <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.sources.length} fakeLength={100} /> */}
