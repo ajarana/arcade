@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './css/App.css';
 import {key} from './api-key.js';
-// import OurConnector from './containers/filter';
+import Filter2 from './containers/filter';
+import AsyncApp from './containers/filter';
 
 function Filter(props) {
   return (
@@ -165,7 +166,7 @@ class App extends Component {
   }
 
   clickHandler(category) {
-    console.log("clickhandler called");
+    // console.log("clickhandler called");
     if (category === "technology") {
       this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": true, "secondButtonSelected": false, "thirdButtonSelected": false, "currentCategory": category});
     }
@@ -196,7 +197,8 @@ class App extends Component {
     return (
       <div className="App">
         <div id="contentWrapper">
-        {/* <OurConnector /> */}
+        <AsyncApp />
+
         <Filter clickHandler={this.clickHandler} firstStageLength={this.state.firstStageLength} firstButtonSelected={this.state.firstButtonSelected} secondButtonSelected={this.state.secondButtonSelected} thirdButtonSelected={this.state.thirdButtonSelected} />
 
         {/* <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.sources.length} fakeLength={100} /> */}

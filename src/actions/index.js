@@ -1,13 +1,9 @@
-import fetch from 'isomorphic-fetch';
+import { key } from '../api-key.js';
 
-export function anAction(theAction) {
-  return {
-    type: 'setFalse',
-    theAction
-  }
-}
-
+export const REQUEST_SOURCES = 'REQUEST_SOURCES'
+export const RECEIVE_SOURCES = 'RECEIVE_SOURCES'
 export const SELECT_CATEGORY = 'SELECT_CATEGORY'
+export const INVALIDATE_CATEGORY = 'INVALIDATE_CATEGORY'
 
 export function selectCategory(category) {
   return {
@@ -16,43 +12,70 @@ export function selectCategory(category) {
   }
 }
 
-export const INVALIDATE_CATEGORY = 'INVALIDATE_CATEGORY'
-
-//refresh to update
-export function invalidatecategory(category) {
+export function invalidateCategory(category) {
   return {
     type: INVALIDATE_CATEGORY,
     category
   }
 }
 
-export const REQUEST_ARTICLES = 'REQUEST_ARTICLES'
-
-function requestArticles(category) {
+function requestSources(category) {
   return {
-    type: REQUEST_ARTICLES,
+    type: REQUEST_SOURCES,
     category
   }
 }
 
-export const RECEIVE_ARTICLES = 'RECEIVE_ARTICLES'
-
-function receiveArticles(category, json) {
+function receiveSources(category, json) {
   return {
-    type: RECEIVE_ARTICLES,
+    type: RECEIVE_SOURCES,
     category,
-    articles: json.sources.map(child => child.id),
+    sources: json.sources.map(child => {return child.id}),
     receivedAt: Date.now()
   }
 }
 
-export function fetchArticles(category) {
-  return function (dispatch) {
-    dispatch(requestArticles(category))
+function receiveArticles(json) {
+  for (let i = 0; i < json.articles.length; i++) {
+    // console.log(json.articles[i].title);
+  }
+  // return {
+  //
+  // }
+}
 
-    return fetch(`https://newsapi.org/v1/sources?language=en&category=${category}`).then(response => response.json()).then(json =>
-      dispatch(receiveArticles(category, json))
-      // {console.log("Hello, Andres. Here is json:")+console.log(json)}
-    )
+function fetchArticles(sources) {
+  // console.log("Hello, Andres. fetchArticles() has been called.");
+  // console.log(sources);
+  for (let i = 0; i < sources.length; i++) {
+    fetch(`https://newsapi.org/v1/articles?source=${sources[i]}` + '&apiKey=' + key).then(response => response.json()).then(json => receiveArticles(json));
+  }
+}
+
+function fetchSources(category) {
+  return dispatch => {
+    dispatch(requestSources(category))
+    return fetch(`https://newsapi.org/v1/sources?language=en&category=${category}`)
+      .then(response => response.json())
+      .then(json => dispatch(receiveSources(category, json))).then(obj => fetchArticles(obj.sources));
+  }
+}
+
+function shouldFetchSources(state, category) {
+  const sources = state.sourcesByCategory[category]
+  if (!sources) {
+    return true
+  } else if (sources.isFetching) {
+    return false
+  } else {
+    return sources.didInvalidate
+  }
+}
+
+export function fetchSourcesIfNeeded(category) {
+  return (dispatch, getState) => {
+    if (shouldFetchSources(getState(), category)) {
+      return dispatch(fetchSources(category))
+    }
   }
 }

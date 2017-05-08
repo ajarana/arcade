@@ -2,8 +2,8 @@ import React, { PropTypes } from 'react';
 
 const Button = ({ onClick, aBool }) => (
   <div>
-    {console.log("Currently at Button")}
-    {console.log(aBool)}
+    {/* {console.log("Currently at Button")}
+    {console.log(aBool)} */}
     <button onClick={onClick}>
       Add Todo
     </button>

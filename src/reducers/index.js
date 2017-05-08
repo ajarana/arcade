@@ -1,23 +1,10 @@
 import { combineReducers } from 'redux';
 import {
   SELECT_CATEGORY, INVALIDATE_CATEGORY,
-  REQUEST_ARTICLES, RECEIVE_ARTICLES
+  REQUEST_SOURCES, RECEIVE_SOURCES
 } from '../actions';
 
-// function isButtonToggled(state = { aBool:true }, action) {
-//   switch (action.type) {
-//     case 'setFalse':
-//       // console.log(state.aBool);
-//       return {
-//         aBool: action.theAction
-//       }
-//
-//     default:
-//       return state
-//   }
-// }
-
-function selectedCategory(state = '', action) {
+function selectedCategory(state = 'technology', action) {
   switch (action.type) {
     case SELECT_CATEGORY:
       return action.category
@@ -26,40 +13,40 @@ function selectedCategory(state = '', action) {
   }
 }
 
-function articles(state = {
+function sources(state = {
   isFetching: false,
   didInvalidate: false,
-  articles: []
+  items: []
 }, action) {
   switch (action.type) {
     case INVALIDATE_CATEGORY:
       return Object.assign({}, state, {
         didInvalidate: true
       })
-    case REQUEST_ARTICLES:
+    case REQUEST_SOURCES:
       return Object.assign({}, state, {
         isFetching: true,
         didInvalidate: false
       })
-    case RECEIVE_ARTICLES:
+    case RECEIVE_SOURCES:
       return Object.assign({}, state, {
         isFetching: false,
         didInvalidate: false,
-        articles: action.articles,
-        lastUpdate: action.recievedAt
+        items: action.sources,
+        lastUpdated: action.receivedAt
       })
     default:
       return state
   }
 }
 
-function articlesByCategory(state = {}, action) {
+function sourcesByCategory(state = {}, action) {
   switch (action.type) {
     case INVALIDATE_CATEGORY:
-    case RECEIVE_ARTICLES:
-    case REQUEST_ARTICLES:
+    case RECEIVE_SOURCES:
+    case REQUEST_SOURCES:
       return Object.assign({}, state, {
-        [action.category]: articles(state[action.category], action)
+        [action.category]: sources(state[action.category], action)
       })
     default:
       return state
@@ -67,7 +54,7 @@ function articlesByCategory(state = {}, action) {
 }
 
 const rootReducer = combineReducers({
-  articlesByCategory,
+  sourcesByCategory,
   selectedCategory
 });
 
