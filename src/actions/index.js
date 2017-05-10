@@ -5,6 +5,9 @@ export const RECEIVE_SOURCES = 'RECEIVE_SOURCES'
 export const SELECT_CATEGORY = 'SELECT_CATEGORY'
 export const INVALIDATE_CATEGORY = 'INVALIDATE_CATEGORY'
 
+export const REQUEST_ARTICLES = 'REQUEST_ARTICLES'
+export const RECEIVE_ARTICLES = 'RECEIVE_ARTICLES'
+
 export function selectCategory(category) {
   return {
     type: SELECT_CATEGORY,
@@ -26,38 +29,49 @@ function requestSources(category) {
   }
 }
 
+function requestArticles(sources) {
+  return {
+    type: REQUEST_ARTICLES,
+    sources
+  }
+}
+
 function receiveSources(category, json) {
+  console.log("Hello, Andres. We're here at receiveArticles");
+  console.log(json);
   return {
     type: RECEIVE_SOURCES,
     category,
-    sources: json.sources.map(child => {return child.id}),
+    sources: json.sources.map(child => child.id),
     receivedAt: Date.now()
   }
 }
 
-function receiveArticles(json) {
-  for (let i = 0; i < json.articles.length; i++) {
-    // console.log(json.articles[i].title);
+function receiveArticles(source, json) {
+  // console.log("Hello, Andres. We're here at receiveArticles");
+  // console.log(source);
+  return {
+    type: RECEIVE_ARTICLES,
+    source,
+    articles: json.articles.map(child => child.title)
   }
-  // return {
-  //
-  // }
 }
 
 function fetchArticles(sources) {
-  // console.log("Hello, Andres. fetchArticles() has been called.");
-  // console.log(sources);
-  for (let i = 0; i < sources.length; i++) {
-    fetch(`https://newsapi.org/v1/articles?source=${sources[i]}` + '&apiKey=' + key).then(response => response.json()).then(json => receiveArticles(json));
+  return dispatch => {
+    dispatch(requestArticles(sources));
+
+    return sources.map(source => fetch(`https://newsapi.org/v1/articles?source=${source}` + '&apiKey=' + key).then(response => response.json()).then(json => dispatch(receiveArticles(source, json))));
   }
 }
 
 function fetchSources(category) {
   return dispatch => {
-    dispatch(requestSources(category))
+    dispatch(requestSources(category));
+
     return fetch(`https://newsapi.org/v1/sources?language=en&category=${category}`)
       .then(response => response.json())
-      .then(json => dispatch(receiveSources(category, json))).then(obj => fetchArticles(obj.sources));
+      .then(json => dispatch(receiveSources(category, json))).then(obj => dispatch(fetchArticles(obj.sources)));
   }
 }
 

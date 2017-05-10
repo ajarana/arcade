@@ -1,20 +1,21 @@
-import React, { Component, PropTypes } from 'react'
-import { connect } from 'react-redux'
-import { selectCategory, fetchSourcesIfNeeded, invalidateCategory } from '../actions'
-import Picker from '../components/Picker'
-import Sources from '../components/Sources'
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { selectCategory, fetchSourcesIfNeeded, invalidateCategory } from '../actions';
+import Picker from '../components/Picker';
+import Sources from '../components/Sources';
 
 class AsyncApp extends Component {
   constructor(props) {
-    super(props)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleRefreshClick = this.handleRefreshClick.bind(this)
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this)
+    this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   componentDidMount() {
     // console.log("Hello, Andres. The value for 'this.props.sources' at 'componentDidMount()' is:");
     // console.log(this.props.sources);
-    const { dispatch, selectedCategory } = this.props
+    const { dispatch, selectedCategory } = this.props;
     dispatch(fetchSourcesIfNeeded(selectedCategory))
   }
 
@@ -31,6 +32,10 @@ class AsyncApp extends Component {
     this.props.dispatch(selectCategory(nextCategory))
     this.props.dispatch(fetchSourcesIfNeeded(nextCategory))
   }
+  handleClick(nextCategory) {
+    this.props.dispatch(selectCategory(nextCategory));
+    this.props.dispatch(fetchSourcesIfNeeded(nextCategory))
+  }
 
   handleRefreshClick(e) {
     e.preventDefault()
@@ -41,12 +46,20 @@ class AsyncApp extends Component {
   }
 
   render() {
-    const { selectedCategory, sources, isFetching, lastUpdated } = this.props
+    const {
+      selectedCategory,
+      sources,
+      articles,
+      isFetching,
+      lastUpdated } = this.props
     return (
       <div>
-        <Picker value={selectedCategory}
-                onChange={this.handleChange}
-                options={[ 'technology', 'gaming' ]} />
+        <Picker
+                // value={selectedCategory}
+                // onChange={this.handleChange}
+                onClick={this.handleClick}
+                // options={[ 'technology', 'gaming', 'science' ]}
+        />
         <p>
           {lastUpdated &&
             <span>
@@ -69,7 +82,7 @@ class AsyncApp extends Component {
         }
         {sources.length > 0 &&
           <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-            <Sources sources={sources} />
+            <Sources sources={sources} articles={articles} />
           </div>
         }
       </div>
@@ -80,31 +93,33 @@ class AsyncApp extends Component {
 AsyncApp.propTypes = {
   selectedCategory: PropTypes.string.isRequired,
   sources: PropTypes.array.isRequired,
+  articles: PropTypes.array.isRequired,
   isFetching: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
-  // console.log('THIS IS STATE');
-  // console.log(state);
-  const { selectedCategory, sourcesByCategory } = state
+  const { selectedCategory, sourcesByCategory, articlesBySources } = state;
   const {
     isFetching,
     lastUpdated,
-    items: sources
-    // items: articles
+    sources,
   } = sourcesByCategory[selectedCategory] || {
     isFetching: true,
-    items: []
-  }
-  if (sourcesByCategory[selectedCategory]) {
-    // console.log("hello");
-    // console.log(sourcesByCategory[selectedCategory].items);
-  }
+    sources: [],
+  };
+  const { articles } = articlesBySources || ['ohwuuut'];
+
+  console.log('logging articles const');
+  console.log(articles);
+  console.log('logging articlesBySources.articles');
+  console.log(articlesBySources.articles);
+
   return {
     selectedCategory,
     sources,
+    articles,
     isFetching,
     lastUpdated
   }

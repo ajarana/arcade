@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { selectCategory, fetchArticlesIfNeeded } from './actions';
 import rootReducer from './reducers';
-import AsyncApp from './containers/filter';
+import AsyncApp from './containers/Filter';
 
 const loggerMiddleware = createLogger();
 
@@ -22,9 +22,9 @@ const store = createStore(
   )
 )
 
-store.subscribe(() =>
-  console.log(store.getState())
-)
+// store.subscribe(() =>
+//   console.log(store.getState())
+// )
 // store.dispatch(selectCategory('gaming'));
 // store.dispatch(fetchArticlesIfNeeded('gaming')).then(() =>
 //   console.log(store.getState())
@@ -35,8 +35,8 @@ store.subscribe(() =>
 
 ReactDOM.render(
   <Provider store={store}>
-    <AsyncApp />
-    {/* <App /> */}
+    {/* <AsyncApp /> */}
+    <App />
   </Provider>,
   document.getElementById('root')
 );

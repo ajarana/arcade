@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './css/App.css';
 import {key} from './api-key.js';
-import Filter2 from './containers/filter';
-import AsyncApp from './containers/filter';
+import Filter2 from './containers/Filter';
+import AsyncApp from './containers/Filter';
 
 function Filter(props) {
   return (

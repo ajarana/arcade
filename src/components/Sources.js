@@ -1,17 +1,17 @@
 import React, { PropTypes, Component } from 'react';
 
-export default class Sources extends Component {
-  render() {
-    return (
-      <ul>
-        {this.props.sources.map((source, i) =>
-          <li key={i}>{source}</li>
-        )}
-      </ul>
-    )
-  }
+export default function Sources(props) {
+  return (
+    <ul>
+      {props.articles.map((child, i) =>
+        <li key={i}>{child.title}</li>
+      )}
+    </ul>
+  )
+
 }
 
 Sources.propTypes = {
-  sources: PropTypes.array.isRequired
+  sources: PropTypes.array.isRequired,
+  articles: PropTypes.array.isRequired
 }
