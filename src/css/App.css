@@ -6,6 +6,9 @@
 
 body {
   font-size: 14px;
+
+  min-height: 100vh;
+  position: relative;
 }
 
 .App {
@@ -33,47 +36,47 @@ body {
 #contentWrapper {
   width: 100%;
   max-width: 700px;
+  padding-bottom: 200px;
 
   margin: 0 auto;
 }
-@media (min-width: 576) {
+/*@media (min-width: 576px) {
   #contentWrapper {
     width: 85%;
   }
-}
-
-
-.searchBar {
-  width: 80%;
-  max-width: 1000px;
-  padding: 20px;
-  box-sizing: border-box;
-  font-size: 28px;
-
-  margin: 50px 0;
-  border: 1px solid #b9b9b9;
-  border-radius: 3px;
-
-}
+}*/
 
 #filterWrapper {
-  max-width: 450px;
+  /*max-width: 450px;*/
   /*text-align: center;*/
-  margin: 0 auto;
+  /*margin: 0 auto;*/
+  display: flex;
+  align-items: center;
 }
 
 #filterContainer {
-  margin: 25px 0;
+  margin: 25px 0 20px;
   /*text-align: center;*/
+  /*display: flex;*/
+  flex: 0 1 85%;
+  /*justify-content: center;*/
+  /*justify-content: flex-start;*/
+}
+#filterButtonWrapper {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  max-width: 420px;
+}
+#refreshWrapper {
+  display: inline-block;
+  flex: 0 1 15%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .filter {
-  /*display: block;*/
-  /*padding: 15px 35px;*/
   padding: 10px 0;
-  flex: 0 1 25%;
+  flex: 0 1 32%;
   font-size: 14px;
   color: #939393;
   cursor: pointer;
@@ -85,6 +88,10 @@ body {
   z-index: 1;
   margin-right: -1px;
   transition: background-color 0.2s linear 0s, color 0.2s linear 0s, border 0.2s linear 0s;
+}
+.filter:hover {
+  color: #555;
+  /*border-color: #a5a5a5;*/
 }
 .filter.selected1 {
   z-index: 2;
@@ -108,13 +115,117 @@ body {
   outline: none;
 }
 
-#filter1 {
+.filter.selected {
+  z-index: 2;
+  color: white;
+}
+
+.filter.selected.technology {
+  background-color: hsl(350, 100%, 50%);
+  border-color: hsl(350, 100%, 50%);
+}
+.filter.selected.technology:hover {
+  background-color: hsl(360, 100%, 46%);
+  border-color: hsl(350, 100%, 46%);
+}
+.filter.selected.gaming {
+  background-color: hsl(220, 100%, 52%);
+  border-color: hsl(220, 100%, 52%);
+}
+.filter.selected.gaming:hover {
+  background-color: hsl(220, 100%, 48%);
+  border-color: hsl(220, 100%, 48%);
+}
+.filter.selected.science-and-nature {
+  /*background-color: hsl(180, 100%, 50%);*/
+  background-color: hsl(110, 100%, 31%);
+  /*border-color: hsl(180, 100%, 50%);*/
+  border-color: hsl(110, 100%, 31%);
+}
+.filter.selected.science-and-nature:hover {
+  /*background-color: hsl(180, 100%, 46%);*/
+  background-color: hsl(110, 100%, 27%);
+  /*border-color: hsl(180, 100%, 50%);*/
+  border-color: hsl(110, 100%, 27%);
+}
+.filter.selected.business {
+  background-color: hsl(110, 100%, 31%);
+  border-color: hsl(110, 100%, 31%);
+}
+.filter.selected.business:hover {
+  background-color: hsl(110, 100%, 27%);
+  border-color: hsl(110, 100%, 27%);
+}
+
+.filter:first-child {
   border-radius: 10px 0px 0px 10px;
+}
+.filter:last-child {
+  border-radius: 0px 10px 10px 0px;
+}
+
+#filter1 {
+  /*border-radius: 10px 0px 0px 10px;*/
 }
 #filter2 {
 }
 #filter3 {
-  border-radius: 0px 10px 10px 0px;
+  /*border-radius: 0px 10px 10px 0px;*/
+}
+
+#reload {
+  height: 27px;
+  padding: 4px;
+  margin-right: -4px;
+  width: 27px;
+  box-sizing: border-box;
+  position: relative;
+
+  cursor: pointer;
+}
+#reload.move {
+  -webkit-animation: 0.3s ease-in 1 rotate;
+  animation: 0.3s ease-in 1 rotate;
+}
+#reload:before, #reload:after {
+    content: '';
+    display: block;
+    box-sizing: border-box;
+
+    transition: border-color 0.2s linear 0s;
+ }
+#reload:before {
+  border-color: transparent #999 #999 #999;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 4px;
+  height: 100%;
+  width: 100%;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+#reload:hover:before {
+  border-color: transparent #777 #777 #777;
+  /*border-color: transparent pink pink pink;*/
+}
+#reload:after {
+  border-color: transparent transparent transparent #999;
+  border-style: solid;
+  border-width: 6px 0 6px 9px;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 49%;
+  width: 0;
+}
+#reload:hover:after {
+  border-color: transparent transparent transparent #777;
+}
+@-webkit-keyframes rotate {
+  100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
 }
 
 #progressBarWrapper {
@@ -128,12 +239,15 @@ body {
 }
 .progressBar.technology {
   background-color: hsl(350, 100%, 50%);
-  background-color: #ff0080;
 }
 .progressBar.gaming {
   background-color: hsl(220, 100%, 52%);
 }
 .progressBar.science-and-nature {
+  /*background-color: hsl(180, 100%, 50%);*/
+  background-color: hsl(110, 100%, 31%);
+}
+.progressBar.business {
   background-color: hsl(110, 100%, 31%);
 }
 #progressBar1 {
@@ -145,25 +259,42 @@ body {
 
 .hiddenBar {
   height: 5px;
+  transition: opacity 0.2s ease-in 0s;
 }
-.hiddenBar.technology {
-  background-color: hsl(350, 100%, 50%);
+
+.refreshButton {
+  padding: 8px 15px;
+  /*flex: 0 1 25%;*/
+  font-size: 14px;
+  /*color: #939393;*/
+  color: #333;
+  cursor: pointer;
+
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background-color: white;
+
+  margin-left: 10px;
+  /*position: relative;*/
+  /*z-index: 1;*/
+  /*margin-right: -1px;*/
+  /*transition: background-color 0.2s linear 0s, color 0.2s linear 0s, border 0.2s linear 0s;*/
 }
-.hiddenBar.gaming {
-  background-color: hsl(220, 100%, 52%);
-}
-.hiddenBar.science-and-nature {
-  background-color: hsl(110, 100%, 31%);
+
+.standByMessage {
+  padding-top: 75px;
+  text-align: center;
 }
 
 .article {
-  padding: 14px 14px;
+  /*padding: 14px 14px;*/
+  padding: 20px 16px;
   border: 1px solid #ececec;
   margin-top: -1px;
 }
-@media (min-width: 576) {
+@media (min-width: 576px) {
   .article {
-    padding: 30px 30px;
+    padding: 24px 30px;
   }
 }
 .article:first-child {
@@ -173,6 +304,25 @@ body {
 .titleWrapper {
   display: flex;
   align-items: center;
+}
+
+.articleSource {
+  text-align: right;
+  padding-top: 10px;
+  /*padding-bottom: 10px;*/
+  border-top: 1px solid #ddd;
+  /*border-bottom: 1px solid #ddd;*/
+  color: #777;
+}
+.articleSource:before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #aaa;
+  border-radius: 100%;
+
+  margin-right: 7px;
 }
 
 .numbering {
@@ -199,7 +349,8 @@ body {
 }
 
 h3 {
-  font-size: 130%;
+  /*font-size: 130%;*/
+  font-size: 114%;
 }
 
 @keyframes App-logo-spin {

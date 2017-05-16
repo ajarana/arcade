@@ -2,7 +2,8 @@ import { combineReducers } from 'redux';
 import {
   SELECT_CATEGORY, INVALIDATE_CATEGORY,
   REQUEST_SOURCES, RECEIVE_SOURCES,
-  REQUEST_ARTICLES, RECEIVE_ARTICLES
+  REQUEST_ARTICLES, RECEIVE_ARTICLES,
+  ALL_ARTICLES_LOADED
 } from '../actions';
 
 function selectedCategory(state = 'technology', action) {
@@ -15,7 +16,7 @@ function selectedCategory(state = 'technology', action) {
 }
 
 function sources(state = {
-  isFetching: false,
+  isFetchingSources: false,
   didInvalidate: false,
   // items: []
   sources: []
@@ -28,12 +29,12 @@ function sources(state = {
       })
     case REQUEST_SOURCES:
       return Object.assign({}, state, {
-        isFetching: true,
+        isFetchingSources: true,
         didInvalidate: false
       })
     case RECEIVE_SOURCES:
       return Object.assign({}, state, {
-        isFetching: false,
+        isFetchingSources: false,
         didInvalidate: false,
         // items: action.sources,
         sources: action.sources,
@@ -45,40 +46,51 @@ function sources(state = {
 }
 
 function articles(state = {
-  isFetching: false,
-  items: []
+  isFetchingSetOfArticles: false,
+  allArticlesLoaded: false,
+  totalSources: null,
+  sourcesLoaded: 0,
+  articles: []
 }, action) {
-  // console.log("At articles()");
-  // console.log(state.items);
   switch (action.type) {
+    case ALL_ARTICLES_LOADED:
+      return Object.assign({}, state, {
+        allArticlesLoaded: true
+      })
     case REQUEST_ARTICLES:
       return Object.assign({}, state, {
-        isFetching: true,
+        isFetchingSetOfArticles: true,
+        totalSources: null,
+        sourcesLoaded: 0,
+        allArticlesLoaded: false
       })
     case RECEIVE_ARTICLES:
+      console.log("AHHHH");
+      console.log(action.articles);
+      let objectified = action.articles.map(child => {return {
+        source: action.source,
+        title: child.title,
+        url: child.url
+      }});
+      let concatArray = [];
+
+      if (state.sourcesLoaded === 0) {
+        concatArray = objectified;
+      } else {
+        concatArray = state.articles.concat(objectified);
+      }
+
+      let sourcesLoaded = state.sourcesLoaded + 1;
+
       return Object.assign({}, state, {
-        isFetching: false,
-        items: action.articles,
-        lastUpdated: action.receivedAt
+        isFetchingSetOfArticles: false,
+        totalSources: action.totalSources,
+        sourcesLoaded: sourcesLoaded,
+        articles: concatArray
       })
     default:
       return state
   }
-}
-function articles(totalArticles, otherArticles, source, action) {
-  let objectified = otherArticles.map(child => {return {
-    source: source,
-    title: child
-  }});
-  let concatArray = totalArticles.concat(objectified);
-  return concatArray;
-
-  // switch(action.type) {
-  //   case RECEIVE_ARTICLES:
-  //     return concatArray
-  //   default:
-  //     return []
-  // }
 }
 
 function sourcesByCategory(state = {}, action) {
@@ -94,18 +106,16 @@ function sourcesByCategory(state = {}, action) {
   }
 }
 
-function articlesBySources(state = {
-  articles: [],
-  testing: [1,2,3]
-}, action) {
+function articlesByCategory(state = {}, action) {
   switch(action.type) {
+    case ALL_ARTICLES_LOADED:
+    case INVALIDATE_CATEGORY:
     case RECEIVE_ARTICLES:
-    // case REQUEST_ARTICLES:
-      console.log("here at articlesBySources()");
-      // console.log(JSON.stringify(state));
-      console.log(state);
+    case REQUEST_ARTICLES:
+      // console.log("here at articlesByCategory()");
+      // console.log(state);
       return Object.assign({}, state, {
-        articles: articles(state.articles, action.articles, action.source, action)
+        [action.category]: articles(state[action.category], action),
       })
     default:
       return state
@@ -115,7 +125,7 @@ function articlesBySources(state = {
 const rootReducer = combineReducers({
   sourcesByCategory,
   selectedCategory,
-  articlesBySources
+  articlesByCategory
 });
 
 export default rootReducer;

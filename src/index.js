@@ -12,8 +12,6 @@ import AsyncApp from './containers/Filter';
 
 const loggerMiddleware = createLogger();
 
-// let store = createStore(rootReducer);
-// console.log(store.getState());
 const store = createStore(
   rootReducer,
   applyMiddleware(
@@ -22,20 +20,8 @@ const store = createStore(
   )
 )
 
-// store.subscribe(() =>
-//   console.log(store.getState())
-// )
-// store.dispatch(selectCategory('gaming'));
-// store.dispatch(fetchArticlesIfNeeded('gaming')).then(() =>
-//   console.log(store.getState())
-// )
-// store.subscribe(() =>
-//   console.log(store.getState())
-// )
-
 ReactDOM.render(
   <Provider store={store}>
-    {/* <AsyncApp /> */}
     <App />
   </Provider>,
   document.getElementById('root')

@@ -1,12 +1,14 @@
 import { key } from '../api-key.js';
 
-export const REQUEST_SOURCES = 'REQUEST_SOURCES'
-export const RECEIVE_SOURCES = 'RECEIVE_SOURCES'
-export const SELECT_CATEGORY = 'SELECT_CATEGORY'
-export const INVALIDATE_CATEGORY = 'INVALIDATE_CATEGORY'
+export const REQUEST_SOURCES = 'REQUEST_SOURCES';
+export const RECEIVE_SOURCES = 'RECEIVE_SOURCES';
+export const SELECT_CATEGORY = 'SELECT_CATEGORY';
+export const INVALIDATE_CATEGORY = 'INVALIDATE_CATEGORY';
 
-export const REQUEST_ARTICLES = 'REQUEST_ARTICLES'
-export const RECEIVE_ARTICLES = 'RECEIVE_ARTICLES'
+export const REQUEST_ARTICLES = 'REQUEST_ARTICLES';
+export const RECEIVE_ARTICLES = 'RECEIVE_ARTICLES';
+
+export const ALL_ARTICLES_LOADED = 'ALL_ARTICLES_LOADED';
 
 export function selectCategory(category) {
   return {
@@ -22,6 +24,13 @@ export function invalidateCategory(category) {
   }
 }
 
+export function allArticlesAreLoaded(category) {
+  return {
+    type: ALL_ARTICLES_LOADED,
+    category
+  }
+}
+
 function requestSources(category) {
   return {
     type: REQUEST_SOURCES,
@@ -29,16 +38,17 @@ function requestSources(category) {
   }
 }
 
-function requestArticles(sources) {
+function requestArticles(category, sources) {
   return {
     type: REQUEST_ARTICLES,
+    category,
     sources
   }
 }
 
 function receiveSources(category, json) {
-  console.log("Hello, Andres. We're here at receiveArticles");
-  console.log(json);
+  // console.log("Hello, Andres. We're here at receiveArticles");
+  // console.log(json);
   return {
     type: RECEIVE_SOURCES,
     category,
@@ -47,21 +57,25 @@ function receiveSources(category, json) {
   }
 }
 
-function receiveArticles(source, json) {
-  // console.log("Hello, Andres. We're here at receiveArticles");
-  // console.log(source);
+function receiveArticles(category, totalSources, json) {
+  console.log("Hello, Andres. We're here at receiveArticles");
+  console.log(json);
   return {
     type: RECEIVE_ARTICLES,
-    source,
-    articles: json.articles.map(child => child.title)
+    category,
+    source: json.source,
+    totalSources,
+    articles: json.articles
   }
 }
 
-function fetchArticles(sources) {
+function fetchArticles(category, sources) {
+  // console.log("ayyyy");
+  // console.log(sources.length);
   return dispatch => {
-    dispatch(requestArticles(sources));
+    dispatch(requestArticles(category, sources));
 
-    return sources.map(source => fetch(`https://newsapi.org/v1/articles?source=${source}` + '&apiKey=' + key).then(response => response.json()).then(json => dispatch(receiveArticles(source, json))));
+    return sources.map(source => fetch(`https://newsapi.org/v1/articles?source=${source}` + '&apiKey=' + key).then(response => response.json()).then(json => dispatch(receiveArticles(category, sources.length, json))));
   }
 }
 
@@ -71,7 +85,7 @@ function fetchSources(category) {
 
     return fetch(`https://newsapi.org/v1/sources?language=en&category=${category}`)
       .then(response => response.json())
-      .then(json => dispatch(receiveSources(category, json))).then(obj => dispatch(fetchArticles(obj.sources)));
+      .then(json => dispatch(receiveSources(category, json))).then(obj => dispatch(fetchArticles(category, obj.sources)));
   }
 }
 

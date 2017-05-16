@@ -17,21 +17,12 @@ function Filter(props) {
 }
 
 function ProgressBar(props) {
-  // console.log("HERE AT PROGRESS BAR");
-  // console.log((props.actualLength/(props.totalLength)) ? (props.actualLength)/(props.totalLength)*80+"%" : 0);
-  // console.log("where props.actualLength is: ");
-  // console.log(props.actualLength);
-  // console.log("and props.totalLength is: ");
-  // console.log(props.totalLength);
-  // console.log("and props.currentlyLoading is: " + props.currentlyLoading);
-  // console.log("and firststagelength is: "+props.firstStageLength);
-
   return (
     <div id="progressBarWrapper" style={{opacity: (props.currentlyLoading) ? 1 : 0}}>
       <div id="progressBar1" className={(props.currentlyLoading) ? ("progressBar "+props.currentCategory) : ("hiddenBar "+props.currentCategory)} style={{width: (props.firstStageLength) ? props.firstStageLength + "%" : 0}}>
       </div>
 
-      <div id="progressBar2" className={(props.currentlyLoading) ? ("progressBar "+props.currentCategory) : ("hiddenBar "+props.currentCategory)} style={{width: (props.actualLength/(props.totalLength)) ? (props.actualLength)/(props.totalLength)*80+"%" : 0}}>
+      <div id="progressBar2" className={(props.currentlyLoading) ? ("progressBar "+props.currentCategory) : ("hiddenBar "+props.currentCategory)} style={{width: (props.actualLength/(props.totalLength)) ? (props.actualLength)/(props.totalLength)*80+"%" : '50%'}}>
       </div>
     </div>
   );
@@ -39,10 +30,8 @@ function ProgressBar(props) {
 
 function Article(props) {
   var background = ((props.number % 2 === 0)) ? "background-white" : "background-grey";
-  // console.log(background);
   return (
     <div className={"article "+background}>
-      {/* <img src={props.image} className="images" alt="From various news sources." /> */}
       <div className="titleWrapper">
         <span className="numbering">{props.number}</span>
         <h3 className="titles">
@@ -199,12 +188,12 @@ class App extends Component {
         <div id="contentWrapper">
         <AsyncApp />
 
-        <Filter clickHandler={this.clickHandler} firstStageLength={this.state.firstStageLength} firstButtonSelected={this.state.firstButtonSelected} secondButtonSelected={this.state.secondButtonSelected} thirdButtonSelected={this.state.thirdButtonSelected} />
+        {/* <Filter clickHandler={this.clickHandler} firstStageLength={this.state.firstStageLength} firstButtonSelected={this.state.firstButtonSelected} secondButtonSelected={this.state.secondButtonSelected} thirdButtonSelected={this.state.thirdButtonSelected} /> */}
 
         {/* <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.sources.length} fakeLength={100} /> */}
-        <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.actualSourcesLoaded} firstStageLength={this.state.firstStageLength} currentlyLoading={this.state.currentlyLoading} currentCategory={this.state.currentCategory} />
+        {/* <ProgressBar totalLength={this.state.totalSourcesLoaded} actualLength={this.state.actualSourcesLoaded} firstStageLength={this.state.firstStageLength} currentlyLoading={this.state.currentlyLoading} currentCategory={this.state.currentCategory} /> */}
 
-        <AjaxResultHandler result={this.state.sources} />
+        {/* <AjaxResultHandler result={this.state.sources} /> */}
         </div>
       </div>
     );

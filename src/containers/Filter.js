@@ -1,48 +1,50 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { selectCategory, fetchSourcesIfNeeded, invalidateCategory } from '../actions';
+import { selectCategory, fetchSourcesIfNeeded, invalidateCategory, allArticlesAreLoaded } from '../actions';
 import Picker from '../components/Picker';
 import Sources from '../components/Sources';
+import ProgressBar from '../components/ProgressBar';
+import Refresh from '../components/Refresh';
 
 class AsyncApp extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this)
     this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   componentDidMount() {
-    // console.log("Hello, Andres. The value for 'this.props.sources' at 'componentDidMount()' is:");
-    // console.log(this.props.sources);
     const { dispatch, selectedCategory } = this.props;
-    dispatch(fetchSourcesIfNeeded(selectedCategory))
+    dispatch(fetchSourcesIfNeeded(selectedCategory));
   }
 
   componentDidUpdate(prevProps) {
-    // console.log("Hello, Andres. The value for 'this.props.sources' at 'componentDidUpdate()' is:");
-    // console.log(this.props.sources);
-    if (this.props.selectedCategory !== prevProps.selectedCategory) {
-      const { dispatch, selectedCategory } = this.props
+    const { dispatch, selectedCategory, allArticlesLoaded, totalSources, sourcesLoaded } = this.props;
+
+    if (selectedCategory !== selectedCategory) {
       dispatch(fetchSourcesIfNeeded(selectedCategory))
+    }
+
+    if (sourcesLoaded === totalSources && !allArticlesLoaded) {
+      setTimeout(() => dispatch(allArticlesAreLoaded(selectedCategory)), 500);
+
+      setTimeout(() => dispatch(invalidateCategory(selectedCategory)), 750);
     }
   }
 
-  handleChange(nextCategory) {
-    this.props.dispatch(selectCategory(nextCategory))
-    this.props.dispatch(fetchSourcesIfNeeded(nextCategory))
-  }
   handleClick(nextCategory) {
+    // this.props.dispatch(invalidateCategory(this.props.selectedCategory))
     this.props.dispatch(selectCategory(nextCategory));
-    this.props.dispatch(fetchSourcesIfNeeded(nextCategory))
+    this.props.dispatch(fetchSourcesIfNeeded(nextCategory));
   }
 
   handleRefreshClick(e) {
-    e.preventDefault()
+    const { dispatch, selectedCategory } = this.props;
 
-    const { dispatch, selectedCategory } = this.props
-    dispatch(invalidateCategory(selectedCategory))
-    dispatch(fetchSourcesIfNeeded(selectedCategory))
+    // e.preventDefault();
+
+    dispatch(selectCategory(selectedCategory));
+    dispatch(fetchSourcesIfNeeded(selectedCategory));
   }
 
   render() {
@@ -50,38 +52,34 @@ class AsyncApp extends Component {
       selectedCategory,
       sources,
       articles,
-      isFetching,
-      lastUpdated } = this.props
+      isFetchingSources,
+      lastUpdated,
+      totalSources,
+      sourcesLoaded,
+      allArticlesLoaded,
+      didInvalidate } = this.props
     return (
       <div>
-        <Picker
-                // value={selectedCategory}
-                // onChange={this.handleChange}
+        <div id="filterWrapper" className="mainContainer">
+          <Picker
                 onClick={this.handleClick}
-                // options={[ 'technology', 'gaming', 'science' ]}
-        />
-        <p>
-          {lastUpdated &&
-            <span>
-              Last updated at {new Date(lastUpdated).toLocaleTimeString()}.
-              {' '}
-            </span>
-          }
-          {!isFetching &&
-            <a href='#'
-               onClick={this.handleRefreshClick}>
-              Refresh
-            </a>
-          }
-        </p>
-        {isFetching && sources.length === 0 &&
-          <h2>Loading...</h2>
+                selectedCategory={selectedCategory}
+          />
+
+          <Refresh onClick={this.handleRefreshClick} />
+        </div>
+
+        <ProgressBar totalSources={totalSources} sourcesLoaded={sourcesLoaded} allArticlesLoaded={allArticlesLoaded} didInvalidate={didInvalidate} selectedCategory={selectedCategory} />
+
+        {isFetchingSources && sources.length === 0 &&
+          <h2 className="mainContainer standByMessage">Loading...</h2>
         }
-        {!isFetching && sources.length === 0 &&
-          <h2>Empty.</h2>
+        {!isFetchingSources && sources.length === 0 &&
+          <h2 className="mainContainer standByMessage">Empty.</h2>
         }
+
         {sources.length > 0 &&
-          <div style={{ opacity: isFetching ? 0.5 : 1 }}>
+          <div style={{ opacity: isFetchingSources ? 0.5 : 1 }}>
             <Sources sources={sources} articles={articles} />
           </div>
         }
@@ -93,35 +91,53 @@ class AsyncApp extends Component {
 AsyncApp.propTypes = {
   selectedCategory: PropTypes.string.isRequired,
   sources: PropTypes.array.isRequired,
-  articles: PropTypes.array.isRequired,
-  isFetching: PropTypes.bool.isRequired,
+  isFetchingSources: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
-  dispatch: PropTypes.func.isRequired
+  totalSources: PropTypes.number,
+  sourcesLoaded: PropTypes.number,
+  allArticlesLoaded: PropTypes.bool.isRequired,
+  articles: PropTypes.array.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  didInvalidate: PropTypes.bool.isRequired
 }
 
 function mapStateToProps(state) {
-  const { selectedCategory, sourcesByCategory, articlesBySources } = state;
+  const { selectedCategory, sourcesByCategory, articlesByCategory } = state;
   const {
-    isFetching,
+    isFetchingSources,
     lastUpdated,
     sources,
+    didInvalidate
   } = sourcesByCategory[selectedCategory] || {
-    isFetching: true,
-    sources: [],
+    didInvalidate: false,
+    isFetchingSources: true,
+    sources: []
   };
-  const { articles } = articlesBySources || ['ohwuuut'];
-
-  console.log('logging articles const');
-  console.log(articles);
-  console.log('logging articlesBySources.articles');
-  console.log(articlesBySources.articles);
+  const {
+    isFetchingSetOfArticles,
+    allArticlesLoaded,
+    totalSources,
+    sourcesLoaded,
+    articles
+  } = articlesByCategory[selectedCategory] || {
+    isFetchingSetOfArticles: true,
+    allArticlesLoaded: false,
+    totalSources: null,
+    sourcesLoaded: 0,
+    articles: []
+  };
 
   return {
     selectedCategory,
     sources,
-    articles,
-    isFetching,
-    lastUpdated
+    isFetchingSources,
+    lastUpdated,
+    didInvalidate,
+
+    allArticlesLoaded,
+    totalSources,
+    sourcesLoaded,
+    articles
   }
 }
 
