@@ -4,11 +4,20 @@
 @import "./footer.css";
 @import "./colors.css";
 
+html, body {
+  height: 100%;
+}
+
 body {
   font-size: 14px;
 
-  min-height: 100vh;
-  position: relative;
+  /*min-height: 100vh;*/
+  /*position: relative;*/
+}
+
+#rootWrapper {
+  min-height: 100%;
+  margin-bottom: -131px;
 }
 
 .App {
@@ -36,7 +45,7 @@ body {
 #contentWrapper {
   width: 100%;
   max-width: 700px;
-  padding-bottom: 200px;
+  padding-bottom: 220px;
 
   margin: 0 auto;
 }
