@@ -58,11 +58,8 @@ function AjaxResultHandler(props) {
       }
     }
   }
-  // console.log("AjaxResultHandler articles.length: ");
-  // console.log(articles.length);
   return (
     <div>
-      {/* <ProgressBar totalLength={props.totalLength} actualLength={props.actualLength} fakeLength={100} /> */}
       {articles}
     </div>
   );
@@ -90,8 +87,6 @@ class App extends Component {
   }
 
   ajax(url, stateName) {
-    // console.log("ajax called with: "+url);
-    // console.log(url);
     var aRequest = new XMLHttpRequest();
 
     aRequest.onload = () => {
@@ -127,35 +122,24 @@ class App extends Component {
 
       responseSources.push("https://newsapi.org/v1/articles?source=" + response.sources[i].id + "&sortBy=" + firstAvailableSort + "&apiKey=");
 
-      // this.setState({"totalSourcesLoaded": response.sources.length, "actualSourcesLoaded": i+1});
       this.ajax(responseSources[i], "sources");
     }
-    // console.log("HERE I AM");
-    // console.log(response.sources.length);
-    // console.log(response.sources);
   }
 
-  // shouldComponentUpdate() {
-  //   return this.state["sources"].length > 0;
-  // }
   componentDidUpdate() {
-    // console.log("componentdidupdate called");
     if (this.state.actualSourcesLoaded === this.state.totalSourcesLoaded && this.state.currentlyLoading === false) {
       setTimeout(() => {
-        // console.log("FIRST SETTIMEOUT");
         this.setState({"totalSourcesLoaded": null, "actualSourcesLoaded": 0, "firstStageLength": 0})
       }, 200);
     }
     else if (this.state.actualSourcesLoaded === this.state.totalSourcesLoaded) {
       setTimeout(() => {
-        // console.log("SECOND SETTIMEOUT");
         this.setState({"currentlyLoading": false})
       }, 500);
     }
   }
 
   clickHandler(category) {
-    // console.log("clickhandler called");
     if (category === "technology") {
       this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": true, "secondButtonSelected": false, "thirdButtonSelected": false, "currentCategory": category});
     }
@@ -165,8 +149,6 @@ class App extends Component {
       this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": false, "secondButtonSelected": false, "thirdButtonSelected": true, "currentCategory": category});
     }
 
-    // this.setState({"currentlyLoading": true, "loadingAnimationNotRunning": false, "sources": [], "firstStageLength": 20, "firstButtonSelected": true});
-
     this.ajax("https://newsapi.org/v1/sources?language=en&category=" + category);
   }
 
@@ -175,14 +157,6 @@ class App extends Component {
   }
 
   render() {
-    // console.log("render called with this.state.sources.length as: ")
-    // console.log(this.state.sources.length);
-    // // console.log("render called with this.state.sources as: ")
-    // // console.log(this.state.sources);
-    // console.log("render called with this.state.totalSourcesLoaded as: ")
-    // console.log(this.state.totalSourcesLoaded);
-    // console.log("first stage length is: ");
-    // console.log(this.state.firstStageLength);
     return (
       <div className="App">
         <div id="contentWrapper">

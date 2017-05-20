@@ -18,10 +18,8 @@ function selectedCategory(state = 'technology', action) {
 function sources(state = {
   isFetchingSources: false,
   didInvalidate: false,
-  // items: []
   sources: []
 }, action) {
-  // console.log("NO, I HAVE BEEN ACTIVATED, SIRE");
   switch (action.type) {
     case INVALIDATE_CATEGORY:
       return Object.assign({}, state, {
@@ -36,7 +34,6 @@ function sources(state = {
       return Object.assign({}, state, {
         isFetchingSources: false,
         didInvalidate: false,
-        // items: action.sources,
         sources: action.sources,
         lastUpdated: action.receivedAt
       })
@@ -65,8 +62,6 @@ function articles(state = {
         allArticlesLoaded: false
       })
     case RECEIVE_ARTICLES:
-      console.log("AHHHH");
-      console.log(action.articles);
       let objectified = action.articles.map(child => {return {
         source: action.source,
         title: child.title,
@@ -112,8 +107,6 @@ function articlesByCategory(state = {}, action) {
     case INVALIDATE_CATEGORY:
     case RECEIVE_ARTICLES:
     case REQUEST_ARTICLES:
-      // console.log("here at articlesByCategory()");
-      // console.log(state);
       return Object.assign({}, state, {
         [action.category]: articles(state[action.category], action),
       })

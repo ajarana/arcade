@@ -47,8 +47,6 @@ function requestArticles(category, sources) {
 }
 
 function receiveSources(category, json) {
-  // console.log("Hello, Andres. We're here at receiveArticles");
-  // console.log(json);
   return {
     type: RECEIVE_SOURCES,
     category,
@@ -58,8 +56,6 @@ function receiveSources(category, json) {
 }
 
 function receiveArticles(category, totalSources, json) {
-  console.log("Hello, Andres. We're here at receiveArticles");
-  console.log(json);
   return {
     type: RECEIVE_ARTICLES,
     category,
@@ -70,8 +66,6 @@ function receiveArticles(category, totalSources, json) {
 }
 
 function fetchArticles(category, sources) {
-  // console.log("ayyyy");
-  // console.log(sources.length);
   return dispatch => {
     dispatch(requestArticles(category, sources));
 

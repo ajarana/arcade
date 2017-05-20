@@ -3,16 +3,7 @@ import React, { PropTypes } from 'react';
 export default function ProgressBar(props) {
   const { allArticlesLoaded, sourcesLoaded, totalSources, didInvalidate, selectedCategory } = props;
   let visible, width, className;
-  console.log("this is props.didInvalidate");
-  console.log(didInvalidate);
-  console.log("this is allArticlesLoaded");
-  console.log(allArticlesLoaded);
-  console.log("this is sourcesLoaded");
-  console.log(sourcesLoaded);
-  console.log("this is totalSources");
-  console.log(totalSources);
-  console.log("this is selectedCategory");
-  console.log(selectedCategory);
+
   (allArticlesLoaded) ? visible = 0 : visible = 1;
 
   if (totalSources && !didInvalidate) {

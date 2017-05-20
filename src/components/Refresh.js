@@ -8,11 +8,6 @@ export default function Refresh(props) {
       reload.classList.add('move');
       setTimeout(() => reload.classList.remove('move'), 550);
     }, false);
-
-    reload.addEventListener('ontouchstart', (e) => {
-      //remove .reload:hover:before
-      console.log("my aunt had a little tiny pony");
-    }, false);
   }
 
   return (
