@@ -53,7 +53,7 @@ class AsyncApp extends Component {
       sources,
       articles,
       isFetchingSources,
-      lastUpdated,
+      // lastUpdated,
       totalSources,
       sourcesLoaded,
       allArticlesLoaded,
@@ -92,7 +92,7 @@ AsyncApp.propTypes = {
   selectedCategory: PropTypes.string.isRequired,
   sources: PropTypes.array.isRequired,
   isFetchingSources: PropTypes.bool.isRequired,
-  lastUpdated: PropTypes.number,
+  // lastUpdated: PropTypes.number,
   totalSources: PropTypes.number,
   sourcesLoaded: PropTypes.number,
   allArticlesLoaded: PropTypes.bool.isRequired,
@@ -105,7 +105,7 @@ function mapStateToProps(state) {
   const { selectedCategory, sourcesByCategory, articlesByCategory } = state;
   const {
     isFetchingSources,
-    lastUpdated,
+    // lastUpdated,
     sources,
     didInvalidate
   } = sourcesByCategory[selectedCategory] || {
@@ -114,13 +114,13 @@ function mapStateToProps(state) {
     sources: []
   };
   const {
-    isFetchingSetOfArticles,
+    // isFetchingSetOfArticles,
     allArticlesLoaded,
     totalSources,
     sourcesLoaded,
     articles
   } = articlesByCategory[selectedCategory] || {
-    isFetchingSetOfArticles: true,
+    // isFetchingSetOfArticles: true,
     allArticlesLoaded: false,
     totalSources: null,
     sourcesLoaded: 0,
@@ -131,7 +131,7 @@ function mapStateToProps(state) {
     selectedCategory,
     sources,
     isFetchingSources,
-    lastUpdated,
+    // lastUpdated,
     didInvalidate,
 
     allArticlesLoaded,

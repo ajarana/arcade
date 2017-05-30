@@ -69,7 +69,7 @@ function fetchArticles(category, sources) {
   return dispatch => {
     dispatch(requestArticles(category, sources));
 
-    return sources.map(source => fetch(`https://newsapi.org/v1/articles?source=${source}` + '&apiKey=' + key).then(response => response.json()).then(json => dispatch(receiveArticles(category, sources.length, json))));
+    return sources.map(source => fetch(`https://newsapi.org/v1/articles?source=${source}&apiKey=` + key).then(response => response.json()).then(json => dispatch(receiveArticles(category, sources.length, json))));
   }
 }
 

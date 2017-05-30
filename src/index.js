@@ -6,9 +6,7 @@ import thunkMiddleware from 'redux-thunk'
 import { createLogger }  from 'redux-logger';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { selectCategory, fetchArticlesIfNeeded } from './actions';
 import rootReducer from './reducers';
-import AsyncApp from './containers/Filter';
 
 const loggerMiddleware = createLogger();
 
