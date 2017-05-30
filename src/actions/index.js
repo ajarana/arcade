@@ -1,4 +1,4 @@
-import { key } from '../api-key.js';
+import { key } from '../api/api-key.js';
 
 export const REQUEST_SOURCES = 'REQUEST_SOURCES';
 export const RECEIVE_SOURCES = 'RECEIVE_SOURCES';
