@@ -9,7 +9,7 @@ html, body {
 }
 
 body {
-  font-size: 14px;
+  font-size: 100%;
 }
 
 #rootWrapper {
@@ -35,10 +35,6 @@ body {
   text-align: center;
 }
 
-.App-intro {
-  font-size: large;
-}
-
 #contentWrapper {
   width: 100%;
   max-width: 700px;
@@ -58,10 +54,17 @@ body {
   /*margin: 0 auto;*/
   display: flex;
   align-items: center;
+
+  margin: 2.5em 0 1em;
+}
+@media (min-width: 768px) {
+   #filterWrapper {
+      margin: 3.5em 0 1em;
+   }
 }
 
 #filterContainer {
-  margin: 25px 0 20px;
+  /*margin: 25px 0 20px;*/
   /*text-align: center;*/
   /*display: flex;*/
   flex: 0 1 85%;
@@ -354,12 +357,15 @@ body {
   /*border: 1px solid #eaeaea;*/
 }
 
-h3 {
-  /*font-size: 130%;*/
+/*h3 {
+  font-size: 130%;
   font-size: 114%;
+}*/
+#root h3 {
+   font-size: 1em;
 }
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@media (min-width: 768px) {
+   #root h3 {
+      font-size: 1.2em;
+   }
 }
