@@ -14,7 +14,7 @@ body {
 
 #rootWrapper {
   min-height: 100%;
-  margin-bottom: -131px;
+  margin-bottom: -111px;
 }
 
 .App {
@@ -346,6 +346,10 @@ body {
   /*color: hsl(350, 100%, 50%);*/
   color: #444;
   text-decoration: none;
+}
+
+.plainLinks:hover {
+   color: #666;
 }
 
 .background-white {
